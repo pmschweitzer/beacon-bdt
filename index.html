@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PS Beacon Big Deal Margin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>PS Beacon Big Deal Margin Dashboard</h1>
+                <div class="header-info">
+                    <span class="quarter-badge">Q1 FY26</span>
+                    <span class="last-updated">Last Updated: <span id="lastUpdated"></span></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="dashboard-nav">
+            <button class="nav-btn active" data-view="overview">Overview</button>
+            <button class="nav-btn" data-view="clusters">Cluster View</button>
+            <button class="nav-btn" data-view="deals">Deal Details</button>
+            <button class="nav-btn" data-view="forecast">Forecast vs Actual</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Overview View -->
+            <div id="overview-view" class="view-container active">
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Total Priority Deals</span>
+                        </div>
+                        <div class="kpi-value" id="totalDeals">0</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-change positive">+3 from Q4</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Expected EoQ Revenue</span>
+                        </div>
+                        <div class="kpi-value" id="expectedRevenue">$0M</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtext">Forecast + Secured</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Expected EoQ OGM</span>
+                        </div>
+                        <div class="kpi-value" id="expectedOGM">$0M</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-change negative" id="ogmVariance">0% vs Plan</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">At-Risk Deals</span>
+                        </div>
+                        <div class="kpi-value alert" id="atRiskDeals">0</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtext">Margin variance > 10%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Margin Performance by Cluster</h3>
+                        </div>
+                        <canvas id="clusterMarginChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Secured vs Forecast Attainment</h3>
+                        </div>
+                        <canvas id="attainmentChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Top Deals Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Top Priority Deals - Margin Overview</h3>
+                        <div class="table-filters">
+                            <select id="clusterFilter" class="filter-select">
+                                <option value="all">All Clusters</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="dealsTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Cluster</th>
+                                    <th>Deal ID</th>
+                                    <th>Forecast Revenue</th>
+                                    <th>Secured Revenue</th>
+                                    <th>Expected OGM</th>
+                                    <th>OGM %</th>
+                                    <th>Variance vs Plan</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dealsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cluster View -->
+            <div id="clusters-view" class="view-container">
+                <div class="cluster-grid" id="clusterGrid">
+                </div>
+            </div>
+
+            <!-- Deal Details View -->
+            <div id="deals-view" class="view-container">
+                <div class="deal-detail-controls">
+                    <select id="dealSelector" class="deal-select">
+                        <option value="">Select a Deal...</option>
+                    </select>
+                </div>
+                <div id="dealDetailContent" class="deal-detail-content">
+                    <p class="empty-state">Select a deal to view details</p>
+                </div>
+            </div>
+
+            <!-- Forecast vs Actual View -->
+            <div id="forecast-view" class="view-container">
+                <div class="forecast-controls">
+                    <select id="forecastDealSelector" class="deal-select">
+                        <option value="">Select a Deal...</option>
+                    </select>
+                </div>
+                <div class="forecast-charts">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Volume Schedule - Forecast vs Actual</h3>
+                        </div>
+                        <canvas id="volumeScheduleChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Revenue Schedule - Forecast vs Actual</h3>
+                        </div>
+                        <canvas id="revenueScheduleChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Margin Schedule - Forecast vs Actual</h3>
+                        </div>
+                        <canvas id="marginScheduleChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
